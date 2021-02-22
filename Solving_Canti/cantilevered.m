@@ -72,7 +72,7 @@ y_comp = linspace(ymin,ymax,ny_comp);
 
 %% find hyperparameters by optimising the marginal likelihood
 % start guesses, try a few different
-start_guesses = [1 1 0.01 noise_std]; % set last element to NaN if common length scale
+start_guesses = [1 1 1 1]; % set last element to NaN if common length scale
 
 % set optimisation options for fminunc
 options = optimoptions('fminunc','Algorithm','quasi-newton','Display','iter-detailed',...

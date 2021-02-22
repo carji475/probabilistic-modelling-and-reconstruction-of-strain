@@ -89,7 +89,7 @@ for noise_std_vec_index=1:length(noise_std_vec)
         
         %% find hyperparameters by optimising the marginal likelihood
         % start guesses, try a few different
-        start_guesses = [1 0.1 1 noise_std]; % set last element to NaN if common length scale
+        start_guesses = [1 1 1 1]; % set last element to NaN if common length scale
         
         % set optimisation options for fminunc
         options = optimoptions('fminunc','Algorithm','quasi-newton','Display','none',...

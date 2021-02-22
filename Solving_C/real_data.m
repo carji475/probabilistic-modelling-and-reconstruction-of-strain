@@ -70,7 +70,7 @@ addPrevSegs=[0; cumsum(nrSegs(1:end-1)-1)]; % #"additional" segments before prev
 
 %% find hyperparameters by optimising the marginal likelihood
 % start guess
-start_guesses = [1 0.001 0.001 1.5e-4];
+start_guesses = [1 1 1 NaN];
 % set optimisation options for fminunc
 options = optimoptions('fminunc','Algorithm','quasi-newton','Display','iter-detailed',...
     'GradObj','on','TolFun',1e-8,'TolX',1e-8);

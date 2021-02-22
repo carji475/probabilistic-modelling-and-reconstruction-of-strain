@@ -1,15 +1,15 @@
 /*==========================================================
  *
- * construct Phi and predPhi^T using this function
+ * construct Phi and predPhi^T for the attenuated case using this function
  *
  * Compile as below
  *
- * FOR UNIX
+ * UNIX
  * mex CC=gcc LD=gcc COPTIMFLAGS='-O3 -DNDEBUG -ffast-math' CFLAGS='\$CFLAGS -fopenmp' LDFLAGS='\$LDFLAGS -fopenmp' eqBothcalc.c
  *
- * FOR OSX
- * follow instructions in openMP_OSX
- * Then build mex file using mex eqBotchcalc.c
+ * OSX
+ * follow instructions in openMP_OSX 
+ * Then build mex file using mex eqBotchcalc.c  
  *
  *========================================================*/
 
@@ -19,11 +19,11 @@
 
 /* The computational routine */
 void eqBothcalc(double *nn_obs, double *nn_pred, double *nn_m, double *basnrs,
-        double *obs, double *X, double *Y, double *Lxx, double *Lyy, double *AA,
-        double *BB, double *nrSegments, double *addPrevSegments, double *Phi, double *predPhi_T)
+        double *obs, double *X, double *Y, double *Lxx, double *Lyy, double *AA, double *BB,
+        double *nrSegments, double *addPrevSegments, double *Phi, double *predPhi_T)
 {
     
-    int n_obs=(int)nn_obs[0],n_pred=(int)nn_pred[0],n_m=(int)nn_m[0],ss,tt,qq,zz,outerInd;
+    int n_obs=(int)nn_obs[0],n_pred=(int)nn_pred[0],n_m=(int)nn_m[0],ss,tt,zz,qq,outerInd;
     double Lx=Lxx[0], Ly=Lyy[0], A=AA[0], B=BB[0];
     
     if (n_obs>n_pred) {
@@ -42,14 +42,15 @@ void eqBothcalc(double *nn_obs, double *nn_pred, double *nn_m, double *basnrs,
             double x01 = obs[4*(ss+compSegs)], y01=obs[2+4*(ss+compSegs)],
                     nx=(obs[1+4*(ss+compSegs)]-obs[4*(ss+compSegs)])/L1,   /* (x1-x0)/L */
                     ny=(obs[3+4*(ss+compSegs)]-obs[2+4*(ss+compSegs)])/L1; /* (y1-y0)/L */
-            double totL=0;
+            double attConst=0, Ltot=0, att_start=0, subtract=0;
+            
             for (zz=0; zz<nrSegments[ss]; zz++) {
                 /* calculate L=sqrt( (x1-x0)^2 + (y1-y0)^2 ); */
                 double L = sqrt(  (obs[1+4*(ss+compSegs+zz)]-obs[4*(ss+compSegs+zz)])*(obs[1+4*(ss+compSegs+zz)]-obs[4*(ss+compSegs+zz)]) +
                         (obs[3+4*(ss+compSegs+zz)]-obs[2+4*(ss+compSegs+zz)])*(obs[3+4*(ss+compSegs+zz)]-obs[2+4*(ss+compSegs+zz)]) );
                 double x0 = obs[4*(ss+compSegs+zz)], y0=obs[2+4*(ss+compSegs+zz)];
                 double Lstart=sqrt( (x0-x01)*(x0-x01) + (y0-y01)*(y0-y01) ), Lend=Lstart+L;
-                totL = totL+L;
+                Ltot = Ltot + Lend-Lstart;
                 
                 for (tt=0; tt<n_m; tt++) {
                     if (zz==0)
@@ -62,15 +63,21 @@ void eqBothcalc(double *nn_obs, double *nn_pred, double *nn_m, double *basnrs,
                     double superConst=nx*nx*(lambdaXin*lambdaXin-A*lambdaYin*lambdaYin)+
                             ny*ny*(lambdaYin*lambdaYin-A*lambdaXin*lambdaXin),
                             otherConst=2*B*nx*ny*lambdaXin*lambdaYin;
-                    double theInt = superConst*( (sin(lambda_min*Lend+B_min)-sin(lambda_min*Lstart+B_min))/lambda_min +
-                            (-sin(lambda_plus*Lend+B_plus)+sin(lambda_plus*Lstart+B_plus))/lambda_plus )+
-                            otherConst*( (sin(lambda_min*Lend+B_min)-sin(lambda_min*Lstart+B_min))/lambda_min +
-                            (sin(lambda_plus*Lend+B_plus)-sin(lambda_plus*Lstart+B_plus))/lambda_plus );
+                    double int1=0, int2=0;
+                    if (abs(lambda_min)>1e-10)
+                        int1 = ( superConst + otherConst ) * ( sin(lambda_min*Lend+B_min) - sin(lambda_min*Lstart+B_min) ) / lambda_min;
+                    else
+                        int1 = ( superConst + otherConst ) * (Lend-Lstart) * cos(B_min);
+                    if (abs(lambda_plus)>1e-10)
+                        int2 = ( superConst - otherConst ) * ( sin(lambda_plus*Lstart+B_plus) -sin(lambda_plus*Lend+B_plus) ) / lambda_plus;
+                    else
+                        int2 = ( superConst - otherConst ) * (Lend-Lstart) * cos(B_plus);    
+                    double theInt = int1 + int2;
                     Phi[ss+n_obs*tt]+=theInt;
-                    if (zz==nrSegments[ss]-1) 
-                        Phi[ss+n_obs*tt]/=2*totL*(sqrt(Ly*Lx));
+                    if (zz==nrSegments[ss]-1)
+                        Phi[ss+n_obs*tt]/=2*Ltot*(sqrt(Ly*Lx));
                 }
-            }  
+            }
         }
         
         if (ss<n_pred) {
@@ -100,7 +107,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     double *n_obs;  /* # observations */
     double *n_pred; /* # predictions */
     double *n_m;    /* # basis functions */
-    double *basnrs;   /* eigenvalues */
+    double *basnrs; /* eigenvalues */
     double *obs;    /* observed integrals */
     double *X;      /* X-pred */
     double *Y;      /* Y-pred */
