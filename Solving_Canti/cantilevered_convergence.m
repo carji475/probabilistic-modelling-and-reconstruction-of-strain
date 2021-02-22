@@ -24,7 +24,6 @@ m_2 = m_1;      % y
 covFunc = struct('type','Matern','nu',5/2);
 
 %% material parameters
-mu_att = 1e-8;
 E = 200e9;  % Pa
 v = 0.3;
 
@@ -96,12 +95,12 @@ for noise_std_vec_index=1:length(noise_std_vec)
         options = optimoptions('fminunc','Algorithm','quasi-newton','Display','none',...
             'GradObj','on','TolFun',1e-8,'TolX',1e-8);
         % call the optimising routine
-        par_opt = GP_strainFieldOpt(obs,y_meas,m_1,m_2,Lx,Ly,mu_att,nrSegs,addPrevSegs,E,v,options,start_guesses,covFunc);
+        par_opt = GP_strainFieldOpt(obs,y_meas,m_1,m_2,Lx,Ly,nrSegs,addPrevSegs,E,v,options,start_guesses,covFunc);
         
         %% compute the reconstruction
         % call the computational routine
         [epsxx_pred,epsxy_pred,epsyy_pred]=...
-            GP_strainFieldRec(obs,y_meas,[X(:) Y(:)],m_1,m_2,Lx,Ly,mu_att,nrSegs,...
+            GP_strainFieldRec(obs,y_meas,[X(:) Y(:)],m_1,m_2,Lx,Ly,nrSegs,...
             addPrevSegs,par_opt(1),par_opt(2:end-1),par_opt(end),E,v,covFunc,0);
         
         % reshape into matrices

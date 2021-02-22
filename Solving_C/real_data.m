@@ -36,7 +36,6 @@ m_2 = 30;      % y
 covFunc = struct('type','Matern','nu',2.5);
 
 %% material parameters
-mu_att = 0; % NLML: 240=>-216221,  120=>-217433,  0=>-217963
 E = 200e9;  % Pa
 v = 0.3;
 
@@ -76,12 +75,12 @@ start_guesses = [1 0.001 0.001 1.5e-4];
 options = optimoptions('fminunc','Algorithm','quasi-newton','Display','iter-detailed',...
     'GradObj','on','TolFun',1e-8,'TolX',1e-8);
 % call the optimising routine
-par_opt = GP_strainFieldOpt(obs,y_meas,m_1,m_2,Lx,Ly,mu_att,nrSegs,addPrevSegs,E,v,options,start_guesses,covFunc);
+par_opt = GP_strainFieldOpt(obs,y_meas,m_1,m_2,Lx,Ly,nrSegs,addPrevSegs,E,v,options,start_guesses,covFunc);
 
 %% compute the reconstruction
 % call the computational routine
 [epsxx_preda,epsxy_preda,epsyy_preda,epsxx_vara,epsxy_vara,epsyy_vara]=...
-    GP_strainFieldRec(obs,y_meas,[X(:) Y(:); xslice yslice],m_1,m_2,Lx,Ly,mu_att,nrSegs,...
+    GP_strainFieldRec(obs,y_meas,[X(:) Y(:); xslice yslice],m_1,m_2,Lx,Ly,nrSegs,...
     addPrevSegs,par_opt(1),par_opt(2:end-1),par_opt(end),E,v,covFunc);
 
 epsxx_pred = nan(ny,nx);     

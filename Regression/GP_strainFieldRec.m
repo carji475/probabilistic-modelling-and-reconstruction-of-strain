@@ -1,5 +1,5 @@
 function [epsxx_pred,epsxy_pred,epsyy_pred,varargout]=...
-    GP_strainFieldRec(obs,y,pred,m_1,m_2,Lx,Ly,mu_att,nrSegs,addPrevSegs,sigma_f,M,sigma_n,E,v,covFunc,varargin)
+    GP_strainFieldRec(obs,y,pred,m_1,m_2,Lx,Ly,nrSegs,addPrevSegs,sigma_f,M,sigma_n,E,v,covFunc,varargin)
 % GP_strainFieldRec Reconstructed 2D strain field components.
 %   [epsxx_pred,epsxy_pred,epsyy_pred,epsxx_var,epsxy_var,epsyy_var]=GP_strainFieldRec(obs,y,pred,m_1,m_2,Lx,Ly,mu_att,nrSegs,addPrevSegs,sigma_f,M,sigma_n,E,v) 
 %   returns the reconstructed components for the 2D strain tensor, using
@@ -61,8 +61,8 @@ mm_adj = length(mm1(:));              % #basis functions
 mm1=mm1(:); mm2=mm2(:);
 
 % build Phi and predPhi^T
-[Phi, predPhi_T]=eqBothcalc_Att(n_obs,n_pred,mm_adj,[mm1 mm2],...
-     obs(:),pred(:,1),pred(:,2),Lx,Ly,A,B,mu_att,nrSegs,addPrevSegs);
+[Phi, predPhi_T]=eqBothcalc(n_obs,n_pred,mm_adj,[mm1 mm2],...
+     obs(:),pred(:,1),pred(:,2),Lx,Ly,A,B,nrSegs,addPrevSegs);
 
 % spectral density
 sq_lambda = [(mm1*pi/(2*Lx))   (mm2*pi/(2*Ly))]; % angular frequencies

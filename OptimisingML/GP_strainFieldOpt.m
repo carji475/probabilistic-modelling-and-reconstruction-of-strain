@@ -1,4 +1,4 @@
-function par_opt = GP_strainFieldOpt(obs,y,m_1,m_2,Lx,Ly,mu_att,nrSegs,addPrevSegs,E,v,options,start_guesses,covFunc)
+function par_opt = GP_strainFieldOpt(obs,y,m_1,m_2,Lx,Ly,nrSegs,addPrevSegs,E,v,options,start_guesses,covFunc)
 %GP_strainFieldOpt Optimises hyperparamters for 2D strain field reconstruction.
 %   par_opt = GP_strainFieldOpt(obs,y,m_1,m_2,Lx,Ly,mu_att,nrSegs,addPrevSegs,E,v,options,start_guesses)
 %   returns the best solution found after optimising with supplied start guesses, using
@@ -53,7 +53,7 @@ mm_adj = length(mm1(:));              % #basis functions
 mm1=mm1(:); mm2=mm2(:);
 
 % build the basis functions
-[Phi,~]=eqBothcalc_Att(n_obs,0,mm_adj,[mm1 mm2],obs(:),[],[],Lx,Ly,A,B,mu_att,nrSegs,addPrevSegs);
+[Phi,~]=eqBothcalc(n_obs,0,mm_adj,[mm1 mm2],obs(:),[],[],Lx,Ly,A,B,nrSegs,addPrevSegs);
 sq_lambda = [(mm1*pi/(2*Lx))   (mm2*pi/(2*Ly))]; % frequencies
 
 val_opt=realmax; % optimal value of ML, initialise large

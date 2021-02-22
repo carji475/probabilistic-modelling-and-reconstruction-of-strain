@@ -78,14 +78,15 @@ start_guesses = [1 1 0.01 noise_std]; % set last element to NaN if common length
 options = optimoptions('fminunc','Algorithm','quasi-newton','Display','iter-detailed',...
     'GradObj','on','TolFun',1e-8,'TolX',1e-8);
 % call the optimising routine
-par_opt = GP_strainFieldOpt(obs,y_meas,m_1,m_2,Lx,Ly,1e-6,nrSegs,addPrevSegs,E,v,options,start_guesses,covFunc);
+par_opt = GP_strainFieldOpt(obs,y_meas,m_1,m_2,Lx,Ly,nrSegs,addPrevSegs,...
+    E,v,options,start_guesses,covFunc);
 
 % par_opt = [1 1 1 noise_std];
 
 %% compute the reconstruction
 % call the computational routine
 [epsxx_pred,epsxy_pred,epsyy_pred,epsxx_var,epsxy_var,epsyy_var]=...
-    GP_strainFieldRec(obs,y_meas,[X(:) Y(:)],m_1,m_2,Lx,Ly,1e-6,nrSegs,...
+    GP_strainFieldRec(obs,y_meas,[X(:) Y(:)],m_1,m_2,Lx,Ly,nrSegs,...
     addPrevSegs,par_opt(1),par_opt(2:end-1),par_opt(end),E,v,covFunc);
 
 % reshape into matrices
