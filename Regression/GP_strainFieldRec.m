@@ -17,7 +17,6 @@ function [epsxx_pred,epsxy_pred,epsyy_pred,varargout]=...
 %       pred - Px2 matrix with coordinates for the prediction on the form [X(:) Y(:)]
 %       m_1,m_2 - number of basis functions in x/y-direction
 %       Lx,Ly - domain size in x/y-direction to solve for the eigenvalues
-%       mu_att - attenuation coefficient
 %       nrSegs - Nx1 vector specifying the number of segments the ray passes 
 %           through for each measurement
 %       addPrevSegs - Nx1 vector specifying the total number of additional 

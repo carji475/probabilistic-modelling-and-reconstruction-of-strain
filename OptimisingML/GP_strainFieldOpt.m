@@ -15,7 +15,6 @@ function par_opt = GP_strainFieldOpt(obs,y,m_1,m_2,Lx,Ly,nrSegs,addPrevSegs,E,v,
 %       y - column vector of measured values
 %       m_1,m_2 - number of basis functions in x/y-direction
 %       Lx,Ly - domain size in x/y-direction to solve for the eigenvalues
-%       mu_att - attenuation coefficient
 %       nrSegs - Nx1 vector specifying the number of segments the ray passes 
 %           through for each measurement
 %       addPrevSegs - Nx1 vector specifying the total number of additional 
