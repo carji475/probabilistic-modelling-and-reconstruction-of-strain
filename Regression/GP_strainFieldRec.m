@@ -62,7 +62,7 @@ mm1=mm1(:); mm2=mm2(:);
 % build Phi and predPhi^T
 [Phi, predPhi_T]=eqBothcalc(n_obs,n_pred,mm_adj,[mm1 mm2],...
      obs(:),pred(:,1),pred(:,2),Lx,Ly,A,B,nrSegs,addPrevSegs);
-
+ 
 % spectral density
 sq_lambda = [(mm1*pi/(2*Lx))   (mm2*pi/(2*Ly))]; % angular frequencies
 switch covFunc.type

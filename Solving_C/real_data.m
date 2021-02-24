@@ -45,8 +45,7 @@ xmin = -10e-3;   xmax = 10e-3;
 ymin = -10e-3;   ymax = 10e-3;
 x = linspace(xmin,xmax,nx);
 y = linspace(ymin,ymax,ny);
-if ~any(y)==0 || isempty(y); y=[y(y<0) 0 y(y>0)]; ny=ny+1; end
-y_zero_index = find(y==0);
+if ~any(y==0) || isempty(y); y=[y(y<0) 0 y(y>0)]; ny=ny+1; end
 
 numr = 100;
 numtheta = 360;
